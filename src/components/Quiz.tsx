@@ -45,7 +45,11 @@ export default function Quiz() {
       <main>
         <div id={"quiz"}>
           <div id={"question"}>
-            <QuestionTimer onTimeout={handelSkipAnswer} maxTime={3000} />
+            <QuestionTimer
+              key={activeQuestionIndex}
+              onTimeout={handelSkipAnswer}
+              maxTime={3000}
+            />
             <h2 id={"question-overview"}>
               {QUESTIONS[activeQuestionIndex].text}
             </h2>
