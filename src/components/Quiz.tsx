@@ -1,6 +1,8 @@
 import QUESTIONS from "../questions.ts";
 import { useState } from "react";
 import QuizOverImg from "../assets/quiz-complete.png";
+import QuestionTimer from "./QuestionTimer.tsx";
+
 export default function Quiz() {
   const [userAnswers, setUserAnswers] = useState([]);
 
@@ -34,6 +36,10 @@ export default function Quiz() {
       <main>
         <div id={"quiz"}>
           <div id={"question"}>
+            <QuestionTimer
+              onTimeout={() => handleSelectAnswer(null)}
+              maxTime={5000}
+            />
             <h2 id={"question-overview"}>
               {QUESTIONS[activeQuestionIndex].text}
             </h2>
