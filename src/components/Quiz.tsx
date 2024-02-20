@@ -5,7 +5,6 @@ import Question from "./Question.tsx";
 
 export default function Quiz() {
   const [userAnswers, setUserAnswers] = useState([]);
-  const [answerState, setAnswerState] = useState("");
   /**
    *  The active question index is the length of the user answers array
    *  if the answer state is empty, otherwise it is the length of the user
@@ -14,30 +13,16 @@ export default function Quiz() {
    *  is set to "answered" and the active question index is used to determine
    *  the current question.
    */
-  const activeQuestionIndex =
-    answerState === "" ? userAnswers.length : userAnswers.length - 1;
+  const activeQuestionIndex = userAnswers.length;
   const quizOver = activeQuestionIndex === QUESTIONS.length;
 
-  const handleSelectAnswer = useCallback(
-    function handleSelectAnswer(selectedAnswer: any) {
-      setAnswerState("answered");
-
-      setUserAnswers((prevUserAnswers) => {
-        return [...prevUserAnswers, selectedAnswer];
-      });
-      setTimeout(() => {
-        if (selectedAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
-          setAnswerState("correct");
-        } else {
-          setAnswerState("wrong");
-        }
-        setTimeout(() => {
-          setAnswerState("");
-        }, 2000);
-      }, 1000);
-    },
-    [activeQuestionIndex],
-  );
+  const handleSelectAnswer = useCallback(function handleSelectAnswer(
+    selectedAnswer: any,
+  ) {
+    setUserAnswers((prevUserAnswers) => {
+      return [...prevUserAnswers, selectedAnswer];
+    });
+  }, []);
 
   const handelSkipAnswer = useCallback(
     () => handleSelectAnswer(null),
@@ -66,12 +51,9 @@ export default function Quiz() {
         <div id={"quiz"}>
           <Question
             key={activeQuestionIndex}
-            questionText={QUESTIONS[activeQuestionIndex].text}
-            answers={QUESTIONS[activeQuestionIndex].answers}
-            answerState={answerState}
-            selectedAnswer={userAnswers[userAnswers.length - 1]}
             onSelectAnswer={handleSelectAnswer}
             onSkipAnswer={handelSkipAnswer}
+            questionIndex={activeQuestionIndex}
           />
         </div>
       </main>
