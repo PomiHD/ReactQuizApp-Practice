@@ -1,7 +1,7 @@
 import QUESTIONS from "../questions.ts";
 import { useCallback, useState } from "react";
-import QuizOverImg from "../assets/quiz-complete.png";
 import Question from "./Question.tsx";
+import Summary from "./Summary.tsx";
 
 export default function Quiz() {
   const [userAnswers, setUserAnswers] = useState([]);
@@ -30,19 +30,7 @@ export default function Quiz() {
   );
 
   if (quizOver) {
-    return (
-      <div id={"summary"}>
-        <img src={QuizOverImg} alt={"quiz over"} />
-        <div>overview</div>
-        <ul id={"answers"}>
-          {userAnswers.map((answer, index) => (
-            <li key={index} className={"answer"}>
-              {answer}
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
+    return <Summary userAnswers={userAnswers} />;
   }
 
   return (
