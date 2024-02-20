@@ -5,17 +5,39 @@ import QuestionTimer from "./QuestionTimer.tsx";
 
 export default function Quiz() {
   const [userAnswers, setUserAnswers] = useState([]);
-
-  const activeQuestionIndex = userAnswers.length;
+  const [answerState, setAnswerState] = useState("");
+  /**
+   *  The active question index is the length of the user answers array
+   *  if the answer state is empty, otherwise it is the length of the user
+   *  answers array minus 1.
+   *  This is because the user answers array is updated after the answer state
+   *  is set to "answered" and the active question index is used to determine
+   *  the current question.
+   */
+  const activeQuestionIndex =
+    answerState === "" ? userAnswers.length : userAnswers.length - 1;
   const quizOver = activeQuestionIndex === QUESTIONS.length;
 
-  const handleSelectAnswer = useCallback(function handleSelectAnswer(
-    selectedAnswer: any,
-  ) {
-    setUserAnswers((prevUserAnswers) => {
-      return [...prevUserAnswers, selectedAnswer];
-    });
-  }, []);
+  const handleSelectAnswer = useCallback(
+    function handleSelectAnswer(selectedAnswer: any) {
+      setAnswerState("answered");
+
+      setUserAnswers((prevUserAnswers) => {
+        return [...prevUserAnswers, selectedAnswer];
+      });
+      setTimeout(() => {
+        if (selectedAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
+          setAnswerState("correct");
+        } else {
+          setAnswerState("wrong");
+        }
+        setTimeout(() => {
+          setAnswerState("");
+        }, 2000);
+      }, 1000);
+    },
+    [activeQuestionIndex],
+  );
 
   const handelSkipAnswer = useCallback(
     () => handleSelectAnswer(null),
@@ -48,19 +70,36 @@ export default function Quiz() {
             <QuestionTimer
               key={activeQuestionIndex}
               onTimeout={handelSkipAnswer}
-              maxTime={3000}
+              maxTime={4000}
             />
             <h2 id={"question-overview"}>
               {QUESTIONS[activeQuestionIndex].text}
             </h2>
             <ul id={"answers"}>
-              {QUESTIONS[activeQuestionIndex].answers.map((answers) => (
-                <li key={answers} className={"answer"}>
-                  <button onClick={() => handleSelectAnswer(answers)}>
-                    {answers}
-                  </button>
-                </li>
-              ))}
+              {QUESTIONS[activeQuestionIndex].answers.map((answers) => {
+                let cssClass = "";
+                const isSelected =
+                  userAnswers[userAnswers.length - 1] === answers;
+                if (answerState === "answered" && isSelected) {
+                  cssClass = "selected";
+                }
+                if (
+                  (answerState === "correct" || answerState === "wrong") &&
+                  isSelected
+                ) {
+                  cssClass = answerState;
+                }
+                return (
+                  <li key={answers} className={"answer"}>
+                    <button
+                      onClick={() => handleSelectAnswer(answers)}
+                      className={cssClass}
+                    >
+                      {answers}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
